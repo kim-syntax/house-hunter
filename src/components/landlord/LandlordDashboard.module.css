@@ -1,0 +1,317 @@
+/**
+ * Landlord Dashboard Styles
+ */
+
+.container {
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+.navbar {
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.navActions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.navActions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.navActions .profileBtn {
+  background: transparent;
+  color: #667eea;
+}
+
+.navActions .logoutBtn {
+  background: #667eea;
+  color: white;
+}
+
+.navActions .logoutBtn:hover {
+  background: #764ba2;
+}
+
+.header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 40px 20px;
+}
+
+.header h1 {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.header p {
+  font-size: 16px;
+  opacity: 0.9;
+  margin-bottom: 20px;
+}
+
+.addBtnContainer {
+  display: flex;
+  gap: 15px;
+}
+
+.addBtn {
+  padding: 12px 24px;
+  background: white;
+  color: #667eea;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.addBtn:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.statCard {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.statLabel {
+  color: #999;
+  font-size: 14px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.statValue {
+  font-size: 32px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.statChange {
+  color: #27ae60;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.statChange.negative {
+  color: #e74c3c;
+}
+
+.section {
+  margin-bottom: 40px;
+}
+
+.sectionTitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.listingsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.listingCard {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.listingCard:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+}
+
+.listingImage {
+  width: 100%;
+  height: 180px;
+  background: #e0e0e0;
+  position: relative;
+}
+
+.listingImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.statusBadge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+}
+
+.statusBadge.available {
+  background: #27ae60;
+}
+
+.statusBadge.occupied {
+  background: #e74c3c;
+}
+
+.statusBadge.maintenance {
+  background: #f39c12;
+}
+
+.listingContent {
+  padding: 16px;
+}
+
+.listingTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.listingLocation {
+  color: #999;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.listingStats {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  color: #666;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 12px;
+}
+
+.listingActions {
+  display: flex;
+  gap: 8px;
+}
+
+.listingActions button {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.editBtn {
+  background: #667eea;
+  color: white;
+}
+
+.editBtn:hover {
+  background: #764ba2;
+}
+
+.deleteBtn {
+  background: #f0f0f0;
+  color: #e74c3c;
+}
+
+.deleteBtn:hover {
+  background: #e74c3c;
+  color: white;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 12px;
+}
+
+.emptyState h2 {
+  color: #999;
+  margin-bottom: 10px;
+}
+
+.emptyState p {
+  color: #bbb;
+  margin-bottom: 20px;
+}
+
+.emptyState button {
+  padding: 12px 24px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.emptyState button:hover {
+  background: #764ba2;
+}
+
+@media (max-width: 768px) {
+  .statsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .listingsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .header h1 {
+    font-size: 24px;
+  }
+
+  .addBtnContainer {
+    flex-direction: column;
+  }
+
+  .addBtn {
+    width: 100%;
+  }
+}

@@ -1,0 +1,291 @@
+// Prisma schema file for House Hunting App (SQLite for local development)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============ USER MODEL ============
+
+model User {
+  id                String            @id @default(cuid())
+  email             String            @unique
+  phone             String
+  firstName         String
+  lastName          String
+  profilePhotoUrl   String?
+  role              String            @default("TENANT") // TENANT, LANDLORD, ADMIN
+  passwordHash      String
+  isVerified        Boolean           @default(false)
+  emailVerifiedAt   DateTime?
+  refreshToken      String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  deletedAt         DateTime?
+
+  // Relations
+  landlordProfile   LandlordProfile?
+  reviews           Review[]
+  sentMessages      Message[]         @relation("SentMessages")
+  receivedMessages  Message[]         @relation("ReceivedMessages")
+  favorites         Favorite[]
+  notifications     Notification[]
+  reportedContent   ReportedContent[] @relation("ReportedBy")
+  comments          Comment[]
+
+  @@index([email])
+  @@index([role])
+}
+
+// ============ LANDLORD PROFILE ============
+
+model LandlordProfile {
+  id                String                @id @default(cuid())
+  userId            String                @unique
+  bio               String?
+  idType            String
+  idNumber          String
+  idPhotoUrl        String
+  verificationStatus String                @default("PENDING") // PENDING, APPROVED, REJECTED
+  verificationDate  DateTime?
+  averageRating     Float                 @default(0)
+  totalReviews      Int                   @default(0)
+  responseTimeHours Int                   @default(24)
+  isActive          Boolean               @default(true)
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  // Relations
+  user              User                  @relation(fields: [userId], references: [id])
+  houses            House[]
+
+  @@index([userId])
+  @@index([verificationStatus])
+}
+
+// ============ HOUSE MODEL ============
+
+model House {
+  id                String          @id @default(cuid())
+  landlordId        String
+  title             String
+  description       String
+  houseType         String          // BEDSITTER, ONE_BEDROOM, TWO_BEDROOM, THREE_BEDROOM, FOUR_PLUS_BEDROOM
+  bedrooms          Int
+  bathrooms         Int
+  sqft              Int?
+  monthlyRent       Float
+  deposit           Float
+  waterCharge       Float?
+  electricityCharge Float?
+  parkingCharge     Float?
+  address           String
+  city              String
+  estate            String
+  street            String?
+  latitude          Float?
+  longitude         Float?
+  availabilityDate  DateTime?
+  status            String          @default("AVAILABLE") // AVAILABLE, OCCUPIED, MAINTENANCE, DELISTED
+  viewCount         Int             @default(0)
+  favoriteCount     Int             @default(0)
+  averageRating     Float           @default(0)
+  totalReviews      Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  deletedAt         DateTime?
+
+  // Relations
+  landlord          LandlordProfile @relation(fields: [landlordId], references: [id])
+  photos            HousePhoto[]
+  amenities         HouseAmenity[]
+  rules             HouseRule[]
+  reviews           Review[]
+  messages          Message[]
+  favorites         Favorite[]
+
+  @@index([landlordId])
+  @@index([city])
+  @@index([estate])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ============ HOUSE DETAILS ============
+
+model HousePhoto {
+  id              String   @id @default(cuid())
+  houseId         String
+  photoUrl        String
+  caption         String?
+  displayOrder    Int      @default(0)
+  isPrimary       Boolean  @default(false)
+  uploadedAt      DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  house           House    @relation(fields: [houseId], references: [id], onDelete: Cascade)
+
+  @@index([houseId])
+}
+
+model HouseAmenity {
+  id              String   @id @default(cuid())
+  houseId         String
+  amenity         String
+  createdAt       DateTime @default(now())
+
+  // Relations
+  house           House    @relation(fields: [houseId], references: [id], onDelete: Cascade)
+
+  @@unique([houseId, amenity])
+  @@index([houseId])
+}
+
+model HouseRule {
+  id              String   @id @default(cuid())
+  houseId         String
+  rule            String
+  createdAt       DateTime @default(now())
+
+  // Relations
+  house           House    @relation(fields: [houseId], references: [id], onDelete: Cascade)
+
+  @@index([houseId])
+}
+
+// ============ REVIEWS & RATINGS ============
+
+model Review {
+  id                            String              @id @default(cuid())
+  houseId                       String
+  tenantId                      String
+  rating                        Int                 // 1-5
+  title                         String
+  reviewText                    String
+  cleanlinessRating             Int                 // 1-5
+  landlordResponsivenessRating  Int                 // 1-5
+  valueForMoneyRating           Int                 // 1-5
+  moderationStatus              String              @default("PENDING") // PENDING, APPROVED, REJECTED
+  flaggedReason                 String?
+  helpfulCount                  Int                 @default(0)
+  createdAt                     DateTime            @default(now())
+  updatedAt                     DateTime            @updatedAt
+  deletedAt                     DateTime?
+
+  // Relations
+  house                         House               @relation(fields: [houseId], references: [id], onDelete: Cascade)
+  tenant                        User                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  comments                      Comment[]
+
+  @@index([houseId])
+  @@index([tenantId])
+  @@index([moderationStatus])
+}
+
+// ============ COMMENTS ============
+
+model Comment {
+  id                String              @id @default(cuid())
+  reviewId          String
+  tenantId          String
+  commentText       String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  // Relations
+  review            Review              @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  tenant            User                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@index([tenantId])
+}
+
+// ============ MESSAGES ============
+
+model Message {
+  id              String    @id @default(cuid())
+  senderId        String
+  receiverId      String
+  houseId         String?
+  messageText     String
+  isRead          Boolean   @default(false)
+  readAt          DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  sender          User      @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver        User      @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  house           House?    @relation(fields: [houseId], references: [id], onDelete: SetNull)
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([houseId])
+  @@index([createdAt])
+}
+
+// ============ FAVORITES ============
+
+model Favorite {
+  id              String    @id @default(cuid())
+  tenantId        String
+  houseId         String
+  createdAt       DateTime  @default(now())
+
+  // Relations
+  tenant          User      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  house           House     @relation(fields: [houseId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, houseId])
+  @@index([tenantId])
+  @@index([houseId])
+}
+
+// ============ NOTIFICATIONS ============
+
+model Notification {
+  id                String                @id @default(cuid())
+  userId            String
+  type              String                // NEW_MESSAGE, REVIEW_POSTED, HOUSE_POSTED, FAVORITE_UPDATED, REVIEW_APPROVED
+  relatedHouseId    String?
+  relatedUserId     String?
+  title             String
+  body              String
+  isRead            Boolean               @default(false)
+  readAt            DateTime?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  // Relations
+  user              User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ============ REPORTED CONTENT ============
+
+model ReportedContent {
+  id                String              @id @default(cuid())
+  reportedById      String
+  contentType       String
+  contentId         String
+  reason            String
+  description       String?
+  status            String              @default("PENDING") // PENDING, INVESTIGATING, ACTION_TAKEN, DISMISSED
+  adminNotes        String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  // Relations
+  reportedBy        User                @relation("ReportedBy", fields: [reportedById], references: [id])
+
+  @@index([reportedById])
+  @@index([contentId])
+  @@index([status])
+}
